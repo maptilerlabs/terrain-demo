@@ -20,6 +20,8 @@
     <option value="1" selected>lowres</option>
     <option value="2">mediumres</option>
     <option value="101">lowres-medium diff</option>
+    <option value="102">old-medium diff</option>
+    <option value="103">old-lowres diff</option>
   </select>
   Flood: <input type="range" min="-501" max="6000" value="-501" oninput="raster.changed()" id="flood" style="width:500px" /> (<span id="flood-val"></span>)
   <script>
@@ -47,6 +49,10 @@
         if (data.source > 100) {
           if (data.source == 101) {
             alt = getAlt(pixels[1]) - getAlt(pixels[2]);
+          } else if (data.source == 102) {
+            alt = getAlt(pixels[0]) - getAlt(pixels[2]);
+          } else if (data.source == 103) {
+            alt = getAlt(pixels[0]) - getAlt(pixels[1]);
           }
         } else {
           alt = getAlt(pixels[data.source || 0]);

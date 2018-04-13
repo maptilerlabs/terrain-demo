@@ -9,10 +9,12 @@
     <script src="https://openlayers.org/en/v4.6.5/build/ol.js"></script>
   <style>
     #map {position: absolute; top: 50px; right: 0; bottom: 0; left: 0;}
+    #popup {font-size:0.75em;background:#fff;opacity:0.8;border-radius:2px;text-align:center;}
   </style>
 </head>
 <body>
   <div id="map"></div>
+  <div id="popup"></div>
   Dataset: <select onchange="raster.changed()" id="src">
     <option value="0">old</option>
     <option value="1" selected>lowres</option>
@@ -21,6 +23,9 @@
   </select>
   Flood: <input type="range" min="-501" max="6000" value="-501" oninput="raster.changed()" id="flood" style="width:500px" /> (<span id="flood-val"></span>)
   <script>
+    var getAlt = function(p) {
+      return -10000 + (p[0] * 256 * 256 + p[1] * 256 + p[0]) / 10;
+    };
     var sources = [
       new ol.source.TileJSON({
         crossOrigin: '',
@@ -88,9 +93,7 @@
         return color;
       },
       lib: {
-        getAlt: function(p) {
-          return -10000 + (p[0] * 256 * 256 + p[1] * 256 + p[0]) / 10;
-        }
+        getAlt: getAlt
       }
     });
 
@@ -119,11 +122,7 @@
     }
 
     var map = new ol.Map({
-      layers: [
-        new ol.layer.Image({
-          source: raster
-        })
-      ],
+      layers: [],
       target: 'map',
       view: new ol.View({
         center: center,
@@ -131,10 +130,42 @@
       })
     });
 
-    sources.forEach(function(s) {
+    sources.forEach(function(s, i) {
+      var l = new ol.layer.Tile({
+        source: s,
+        opacity: 0
+      });
+      l.set('terrain-order', i, true);
+      map.addLayer(l);
       s.on('change', function() {raster.changed();});
     });
+    map.addLayer(new ol.layer.Image({
+      source: raster
+    }));
 
+    var pickerOverlay = new ol.Overlay({
+      element: document.getElementById('popup'),
+      offset: [7, 7]
+    });
+    map.on('pointermove', function(evt) {
+      var heights = [];
+      map.forEachLayerAtPixel(evt.pixel, function(layer, pixel) {
+        let height = getAlt(pixel);
+        heights[layer.get('terrain-order')] = height;
+      }, undefined, function(layer) {
+        return layer.getSource() != raster;
+      });
+
+      heights = heights.map(function(h) {return h.toFixed(1);});
+      var html =
+        '<table>' +
+        '<tr><th>old</th><th>lowres</th><th>medium</th></tr>' +
+        '<tr><td>' + heights[0] + '</td><td>' + heights[1] + '</td><td>' + heights[2] + '</td></tr>' +
+        '</table>';
+      pickerOverlay.getElement().innerHTML = html;
+      pickerOverlay.setPosition(evt.coordinate);
+    });
+    map.addOverlay(pickerOverlay);
 
     // permalink
     var view = map.getView();

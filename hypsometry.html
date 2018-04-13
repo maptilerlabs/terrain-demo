@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Raster DEM Hypsometry</title>
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+    <link rel="stylesheet" href="https://openlayers.org/en/v4.6.5/css/ol.css" type="text/css">
+    <!-- The line below is only needed for old environments like Internet Explorer and Android 4.x -->
+    <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,URL"></script>
+    <script src="https://openlayers.org/en/v4.6.5/build/ol.js"></script>
+  <style>
+    #map {position: absolute; top: 50px; right: 0; bottom: 0; left: 0;}
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+  Dataset: <select onchange="raster.changed()" id="src">
+    <option value="0">old</option>
+    <option value="1" selected>lowres</option>
+    <option value="2">mediumres</option>
+    <option value="101">lowres-medium diff</option>
+  </select>
+  Flood: <input type="range" min="-501" max="6000" value="-501" oninput="raster.changed()" id="flood" style="width:500px" /> (<span id="flood-val"></span>)
+  <script>
+    var sources = [
+      new ol.source.TileJSON({
+        crossOrigin: '',
+        url: 'https://temporary.tilehosting.com/terrain.json'
+      }),
+      new ol.source.TileJSON({
+        crossOrigin: '',
+        url: 'https://temporary.tilehosting.com/terrain-lowres.json'
+      }),
+      new ol.source.TileJSON({
+        crossOrigin: '',
+        url: 'http://35.196.72.17:8082/terrain-mediumres-t1-zX-z12.json'
+      })
+    ];
+    var raster = new ol.source.Raster({
+      sources: sources,
+      operation: function(pixels, data) {
+        var alt;
+        if (data.source > 100) {
+          if (data.source == 101) {
+            alt = getAlt(pixels[1]) - getAlt(pixels[2]);
+          }
+        } else {
+          alt = getAlt(pixels[data.source || 0]);
+        }
+
+        var stops = [
+          [-10001, [0, 20, 60]],
+          [-5000, [0, 10, 30]],
+          [-1000, [0, 30, 80]],
+          [-100, [0, 38, 115]],
+          [0, [122, 200, 255]],
+          [10, [51, 102, 0]],
+          [500, [129, 195, 31]],
+          [800, [255, 255, 204]],
+          [1200, [244, 189, 69]],
+          [2000, [102, 51, 12]],
+          [3000, [102, 51, 0]],
+          [8000, [255, 255, 255]],
+          [10000, [255, 255, 255]]
+        ];
+
+        var a = stops[0], b = stops[0];
+        for (var i = 0; i < stops.length - 1; i++) {
+          if (stops[i + 1][0] > alt) {
+            a = stops[i];
+            b = stops[i + 1];
+            break;
+          }
+        }
+
+        var f = (a == b) ? 1 : Math.max(0, Math.min(1, (alt - a[0]) / (b[0] - a[0])));
+        a = a[1], b = b[1];
+        var color = [
+          (1 - f) * a[0] + f * b[0],
+          (1 - f) * a[1] + f * b[1],
+          (1 - f) * a[2] + f * b[2],
+          255
+        ];
+
+        if (data.flood != null && data.flood > alt) {
+          color = [0, 0, 0, 255];
+        }
+
+        return color;
+      },
+      lib: {
+        getAlt: function(p) {
+          return -10000 + (p[0] * 256 * 256 + p[1] * 256 + p[0]) / 10;
+        }
+      }
+    });
+
+    raster.on('beforeoperations', function(event) {
+      var data = event.data;
+      data.flood = parseFloat(document.getElementById('flood').value);
+      data.source = parseFloat(document.getElementById('src').value);
+
+      if (data.flood < -500) data.flood = null;
+      document.getElementById('flood-val').innerHTML = data.flood == null ? 'Off' : data.flood;
+    });
+
+    var map = new ol.Map({
+      layers: [
+        new ol.layer.Image({
+          source: raster
+        })
+      ],
+      target: 'map',
+      view: new ol.View({
+        center: ol.proj.fromLonLat([8.5456, 47.3739]),
+        zoom: 7
+      })
+    });
+
+    sources.forEach(function(s) {
+      s.on('change', function() {raster.changed();});
+    });
+  </script>
+</body>
+</html>

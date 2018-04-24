@@ -19,7 +19,7 @@
     <option value="0">old</option>
     <option value="1" selected>lowres</option>
     <option value="2">mediumres</option>
-    <option value="3">mediumres-fixed</option>
+    <option value="3">old-fixed</option>
     <option value="101">lowres-medium diff</option>
     <option value="102">old-medium diff</option>
     <option value="103">old-lowres diff</option>
@@ -178,8 +178,8 @@
       heights = heights.map(function(h) {return h.toFixed(1);});
       var html =
         '<table>' +
-        '<tr><th>old</th><th>lowres</th><th>medium</th></tr>' +
-        '<tr><td>' + heights[0] + '</td><td>' + heights[1] + '</td><td>' + heights[2] + '</td></tr>' +
+        '<tr><th>old</th><th>lowres</th><th>medium</th><th>old-fixed</th></tr>' +
+        '<tr><td>' + heights[0] + '</td><td>' + heights[1] + '</td><td>' + heights[2] + '</td><td>'+heights[3]+'</td></tr>' +
         '</table>';
       pickerOverlay.getElement().innerHTML = html;
       pickerOverlay.setPosition(evt.coordinate);

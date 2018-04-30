@@ -20,6 +20,7 @@
     <option value="1" selected>lowres</option>
     <option value="2">mediumres</option>
     <option value="3">old-fixed</option>
+    <option value="4">new-lowres</option>
     <option value="101">lowres-medium diff</option>
     <option value="102">old-medium diff</option>
     <option value="103">old-lowres diff</option>
@@ -52,7 +53,11 @@
       new ol.source.TileJSON({
         crossOrigin: '',
         url: 'http://35.196.72.17:8081/terrain-mediumres.json'
-      })
+      }),
+      new ol.source.TileJSON({
+        crossOrigin: '',
+        url: 'http://35.196.72.17:8082/terrain-lowres-v2.1.z0-z9.json'
+      }),
     ];
     var raster = new ol.source.Raster({
       sources: sources,

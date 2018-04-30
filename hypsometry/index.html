@@ -17,10 +17,10 @@
   <div id="popup"></div>
   Dataset: <select onchange="raster.changed()" id="src">
     <option value="0">old</option>
-    <option value="1" selected>lowres</option>
+    <option value="1">lowres</option>
     <option value="2">mediumres</option>
     <option value="3">old-fixed</option>
-    <option value="4">new-lowres</option>
+    <option value="4" selected>new-lowres</option>
     <option value="101">lowres-medium diff</option>
     <option value="102">old-medium diff</option>
     <option value="103">old-lowres diff</option>
@@ -184,7 +184,7 @@
       var titles = ['old', 'lowres', 'medium', 'old-fixed', 'new-lowres'];
       var h_titles = '';
       var h_val = '';
-      for (var i = 0; i < titles.length; i++)
+      for (var i = 0; i < titles.length; i++) {
         h_titles += '<th>' + titles[i] + '</th>';
         h_val += '<td>' + heights[i] + '</td>';
       }

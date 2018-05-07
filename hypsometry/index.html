@@ -16,14 +16,13 @@
   <div id="map"></div>
   <div id="popup"></div>
   Dataset: <select onchange="raster.changed()" id="src">
-    <option value="0">old</option>
-    <option value="1">lowres</option>
-    <option value="2">mediumres</option>
-    <option value="3">old-fixed</option>
-    <option value="4" selected>new-lowres</option>
-    <option value="101">lowres-medium diff</option>
-    <option value="102">old-medium diff</option>
-    <option value="103">old-lowres diff</option>
+    <option value="0" selected>terrain-rgb</option>
+    <option value="1">old mediumres</option>
+    <option value="2">new lowres</option>
+    <option value="3">new mediumres</option>
+    <option value="101">new lowres - terrain-rgb diff</option>
+    <option value="102">old - new medium diff</option>
+    <option value="103">old - new lowres diff</option>
   </select>
   Flood: <input type="range" min="-501" max="6000" value="-501" oninput="raster.changed()" id="flood" style="width:500px" /> (<span id="flood-val"></span>)
   Streets opacity: <input type="range" min="0" max="1" value="0" step="0.1" oninput="streetsLayer.setOpacity(this.value)" />
@@ -33,30 +32,26 @@
     };
     var streetsLayer = new ol.layer.Tile({
       source: new ol.source.TileJSON({
-        url: 'https://maps.tilehosting.com/styles/streets.json?key=hWWfWrAiWGtv68r8wA6D'
+        url: 'https://maps.tilehosting.com/styles/streets.json?key=GAWAl7rAlwv8Y6LrsFrb'
       }),
       opacity: 0
     });
     var sources = [
       new ol.source.TileJSON({
         crossOrigin: '',
-        url: 'https://temporary.tilehosting.com/terrain.json'
+        url: 'https://maps.tilehosting.com/data/terrain-rgb.json?key=GAWAl7rAlwv8Y6LrsFrb'
       }),
       new ol.source.TileJSON({
         crossOrigin: '',
-        url: 'https://temporary.tilehosting.com/terrain-lowres.json'
+        url: 'https://temporary.tilehosting.com/t-old.json'
       }),
       new ol.source.TileJSON({
         crossOrigin: '',
-        url: 'http://35.196.72.17:8082/terrain-mediumres-t1-zX-z12.json'
+        url: 'https://temporary.tilehosting.com/t-lowres.json'
       }),
       new ol.source.TileJSON({
         crossOrigin: '',
-        url: 'http://35.196.72.17:8081/terrain-mediumres.json'
-      }),
-      new ol.source.TileJSON({
-        crossOrigin: '',
-        url: 'http://35.196.72.17:8082/terrain-lowres-v2.1.z0-z9.json'
+        url: 'https://temporary.tilehosting.com/t-mediumres.json'
       }),
     ];
     var raster = new ol.source.Raster({
@@ -65,11 +60,11 @@
         var alt;
         if (data.source > 100) {
           if (data.source == 101) {
-            alt = getAlt(pixels[1]) - getAlt(pixels[2]);
+            alt = getAlt(pixels[2]) - getAlt(pixels[0]);
           } else if (data.source == 102) {
-            alt = getAlt(pixels[0]) - getAlt(pixels[2]);
+            alt = getAlt(pixels[1]) - getAlt(pixels[3]);
           } else if (data.source == 103) {
-            alt = getAlt(pixels[0]) - getAlt(pixels[1]);
+            alt = getAlt(pixels[1]) - getAlt(pixels[2]);
           }
         } else {
           alt = getAlt(pixels[data.source || 0]);
@@ -181,7 +176,7 @@
       });
 
       heights = heights.map(function(h) {return h.toFixed(1);});
-      var titles = ['old', 'lowres', 'medium', 'old-fixed', 'new-lowres'];
+      var titles = ['terrain-rgb', 'old mediumres', 'new lowres', 'new mediumres'];
       var h_titles = '';
       var h_val = '';
       for (var i = 0; i < titles.length; i++) {

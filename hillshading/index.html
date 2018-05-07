@@ -15,11 +15,10 @@
   Exaggeration: <input type="range" min="0" max="1" value="1" step="0.1" oninput="update()" id="exa" />
   B&amp;W: <input type="checkbox" onchange="update()" id="bw" />
   Dataset: <select onchange="update_dataset()" id="src">
-    <option value="https://temporary.tilehosting.com/terrain.json">old</option>
-    <option value="https://temporary.tilehosting.com/terrain-lowres.json" selected>lowres</option>
-    <option value="http://35.196.72.17:8082/terrain-mediumres-t1-zX-z12.json">mediumres</option>
-    <option value="http://35.196.72.17:8081/terrain-mediumres.json">old-fixed</option>
-    <option value="http://35.196.72.17:8082/terrain-lowres-v2.1.z0-z9.json">lowres-new</option>
+    <option value="https://maps.tilehosting.com/data/terrain-rgb.json?key=GAWAl7rAlwv8Y6LrsFrb">Terrain RGB</option>
+    <option value="https://temporary.tilehosting.com/t-old.json">old mediumres</option>
+    <option value="https://temporary.tilehosting.com/t-lowres.json">new lowres</option>
+    <option value="https://temporary.tilehosting.com/t-mediumres.json">new mediumres</option>
   </select>
   <script>
     var update = function() {

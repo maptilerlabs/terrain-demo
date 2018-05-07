@@ -130,7 +130,7 @@
   "sources":{
     "landcover":{
       "type":"vector",
-      "url":"https://maps.tilehosting.com/data/landcover.json?key=GAWAl7rAlwv8Y6LrsFrb"
+      "url":"https://maps.tilehosting.com/data/landcover.json?key=2rAee65H2Kxb4K8dcZTl"
     },
     "terrain-rgb":{
       "type":"raster-dem",

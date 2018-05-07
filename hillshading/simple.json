@@ -130,12 +130,12 @@
   "sources":{
     "landcover":{
       "type":"vector",
-      "url":"https://maps.tilehosting.com/data/landcover.json?key=hWWfWrAiWGtv68r8wA6D"
+      "url":"https://maps.tilehosting.com/data/landcover.json?key=GAWAl7rAlwv8Y6LrsFrb"
     },
     "terrain-rgb":{
       "type":"raster-dem",
       "tileSize": 256,
-      "url":"https://temporary.tilehosting.com/terrain-lowres.json"
+      "url":"https://temporary.tilehosting.com/t-lowres.json"
     }
   },
   "version":8

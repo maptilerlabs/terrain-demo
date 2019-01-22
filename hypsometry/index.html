@@ -17,12 +17,14 @@
   <div id="popup"></div>
   Dataset: <select onchange="raster.changed()" id="src">
     <option value="0" selected>terrain-rgb</option>
-    <option value="1">old mediumres</option>
-    <option value="2">new lowres</option>
-    <option value="3">new mediumres</option>
-    <option value="101">new lowres - terrain-rgb diff</option>
-    <option value="102">old - new medium diff</option>
-    <option value="103">old - new lowres diff</option>
+    <option value="1">Lowres v3 z0-z7</option>
+    <option value="2">old mediumres</option>
+    <option value="3">new lowres</option>
+    <option value="4">new mediumres</option>
+    <option value="101">Lowres v3 - Terrain-rgb diff</option>
+    <option value="102">new lowres - terrain-rgb diff</option>
+    <option value="103">old - new medium diff</option>
+    <option value="104">old - new lowres diff</option>
   </select>
   Flood: <input type="range" min="-501" max="6000" value="-501" oninput="raster.changed()" id="flood" style="width:500px" /> (<span id="flood-val"></span>)
   Streets opacity: <input type="range" min="0" max="1" value="0" step="0.1" oninput="streetsLayer.setOpacity(this.value)" />
@@ -32,14 +34,18 @@
     };
     var streetsLayer = new ol.layer.Tile({
       source: new ol.source.TileJSON({
-        url: 'https://maps.tilehosting.com/styles/streets.json?key=2rAee65H2Kxb4K8dcZTl'
+        url: 'https://maps.tilehosting.com/styles/streets.json?key=mXcaKrAofa07Lt6VRgqC'
       }),
       opacity: 0
     });
     var sources = [
       new ol.source.TileJSON({
         crossOrigin: '',
-        url: 'https://maps.tilehosting.com/data/terrain-rgb.json?key=2rAee65H2Kxb4K8dcZTl'
+        url: 'https://maps.tilehosting.com/data/terrain-rgb.json?key=mXcaKrAofa07Lt6VRgqC'
+      }),
+      new ol.source.TileJSON({
+        crossOrigin: '',
+        url: 'https://maps.tilehosting.com/c/octogeo/data/terrain_lowres-v3.0-z0-z7.json?key=mXcaKrAofa07Lt6VRgqC'
       }),
       new ol.source.TileJSON({
         crossOrigin: '',
@@ -60,11 +66,13 @@
         var alt;
         if (data.source > 100) {
           if (data.source == 101) {
-            alt = getAlt(pixels[2]) - getAlt(pixels[0]);
+            alt = getAlt(pixels[1]) - getAlt(pixels[0]);
           } else if (data.source == 102) {
-            alt = getAlt(pixels[1]) - getAlt(pixels[3]);
+            alt = getAlt(pixels[3]) - getAlt(pixels[0]);
           } else if (data.source == 103) {
-            alt = getAlt(pixels[1]) - getAlt(pixels[2]);
+            alt = getAlt(pixels[2]) - getAlt(pixels[4]);
+          } else if (data.source == 104) {
+            alt = getAlt(pixels[2]) - getAlt(pixels[3]);
           }
         } else {
           alt = getAlt(pixels[data.source || 0]);

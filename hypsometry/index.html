@@ -45,17 +45,23 @@
         crossOrigin: '',
         url: 'https://maps.tilehosting.com/data/terrain-rgb.json?key=' + MT_KEY
       }),
-      new ol.source.TileJSON({
+      new ol.source.XYZ({
         crossOrigin: '',
-        url: 'https://maps.tilehosting.com/c/octogeo/data/terrain_rgb_v3.json?key=' + MT_KEY
+        tileSize: [512, 512],
+        maxZoom: 5,
+        url: 'https://maps.tilehosting.com/c/octogeo/data/terrain_rgb_v3/{z}/{x}/{y}.png?key=' + MT_KEY
       }),
-      new ol.source.TileJSON({
+      new ol.source.XYZ({
         crossOrigin: '',
-        url: 'https://maps.tilehosting.com/c/octogeo/data/terrain_rgb_lowres-v3.0-z0-z5-osm.json?key=' + MT_KEY
+        tileSize: [512, 512],
+        maxZoom: 5,
+        url: 'https://maps.tilehosting.com/c/octogeo/data/terrain_rgb_lowres-v3.0-z0-z5-osm/{z}/{x}/{y}.png?key=' + MT_KEY
       }),
-      new ol.source.TileJSON({
+      new ol.source.XYZ({
         crossOrigin: '',
-        url: 'https://maps.tilehosting.com/c/octogeo/data/terrain_rgb_medium_v3.json?key=' + MT_KEY
+        tileSize: [512, 512],
+        maxZoom: 10,
+        url: 'https://maps.tilehosting.com/c/octogeo/data/terrain_rgb_medium_v3/{z}/{x}/{y}.png?key=' + MT_KEY
       }),
     ];
     var raster = new ol.source.Raster({
@@ -64,7 +70,7 @@
         var alt;
         if (data.source > 100) {
           // 1AB = diff A - B
-          var id = string(data.source);
+          var id = data.source.toString();
           var a = parseInt(id[1]);
           var b = parseInt(id[2]);
           alt = getAlt(pixels[a]) - getAlt(pixels[b]);
@@ -178,7 +184,7 @@
       });
 
       heights = heights.map(function(h) {return h.toFixed(1);});
-      var titles = ['terrain-rgb', 'lowres v3 z5'];
+      var titles = ['terrain-rgb v1', 'terrain-rgb v3', 'lowres v3', 'mediumres v3'];
       var h_titles = '';
       var h_val = '';
       for (var i = 0; i < titles.length; i++) {
@@ -207,6 +213,18 @@
     };
 
     map.on('moveend', updatePermalink);
+
+    // HACK -- overrides `getContext`
+    // Forces every newly-created canvas to have `imageSmoothingEnabled = false`
+    // This basically means `nearest` upsampling and solves most of the filtering artifacts (except during zooming)
+    HTMLCanvasElement.prototype.getContext = function(orig) {
+      return function(type) {
+        var result = orig.apply(this, arguments);
+        //console.log('unsmoothing');
+        result.imageSmoothingEnabled = false;
+        return result;
+      }
+    }(HTMLCanvasElement.prototype.getContext)
   </script>
 </body>
 </html>

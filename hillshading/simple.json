@@ -134,7 +134,6 @@
     },
     "terrain-rgb":{
       "type":"raster-dem",
-      "tileSize": 256,
       "url":"https://maps.tilehosting.com/data/terrain-rgb.json?key=mXcaKrAofa07Lt6VRgqC"
     }
   },

@@ -3,10 +3,10 @@
 <head>
   <title>Raster DEM Hypsometry</title>
   <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
-    <link rel="stylesheet" href="https://cdn.klokantech.com/ol/v5.3.0/ol.css" type="text/css">
+    <link rel="stylesheet" href="https://cdn.maptiler.com/ol/v6.0.0/ol.css" type="text/css">
     <!-- The line below is only needed for old environments like Internet Explorer and Android 4.x -->
     <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,URL"></script>
-    <script src="https://cdn.klokantech.com/ol/v5.3.0/ol.js"></script>
+    <script src="https://cdn.maptiler.com/ol/v6.0.0/ol.js"></script>
   <style>
     #map {position: absolute; top: 50px; right: 0; bottom: 0; left: 0;}
     #popup {font-size:0.75em;background:#fff;opacity:0.8;border-radius:2px;text-align:center;}
@@ -16,13 +16,9 @@
   <div id="map"></div>
   <div id="popup"></div>
   Dataset: <select onchange="raster.changed()" id="src">
-    <option value="0">terrain-rgb v1 z0-z12</option>
-    <option value="1" selected>Terrain RGB v3 z0-z10</option>
-    <option value="2">Lowres v3 z0-z5</option>
-    <option value="3">Medium v3 z0-z10</option>
-    <option value="110">Terrain RGB v3 - Terrain-rgb v1 diff</option>
-    <option value="120">Lowres v3 z5 - Terrain-rgb diff</option>
-    <option value="130">Mediumres v3 z10 - Terrain-rgb diff</option>
+    <option value="0">Production Terrain RGB</option>
+    <option value="1" selected>Aster v3</option>
+    <option value="110">Aster v3 - Production Terrain RGB diff</option>
   </select>
   Flood: <input type="range" min="-501" max="6000" value="-501" oninput="raster.changed()" id="flood" style="width:500px" /> (<span id="flood-val"></span>)
   Streets opacity: <input type="range" min="0" max="1" value="0" step="0.1" oninput="streetsLayer.setOpacity(this.value)" />
@@ -35,7 +31,7 @@
     var streetsLayer = new ol.layer.Tile({
       source: new ol.source.TileJSON({
         crossOrigin: '',
-        url: 'https://maps.tilehosting.com/styles/streets.json?key=' + MT_KEY
+        url: 'https://api.maptiler.com/styles/streets/tiles.json?key=' + MT_KEY
       }),
       opacity: 0
     });
@@ -43,25 +39,13 @@
     var sources = [
       new ol.source.TileJSON({
         crossOrigin: '',
-        url: 'https://maps.tilehosting.com/data/terrain-rgb.json?key=' + MT_KEY
+        tileSize: [512, 512],
+        url: 'https://api.maptiler.com/tiles/terrain-rgb/tiles.json?key=' + MT_KEY
       }),
-      new ol.source.XYZ({
+      new ol.source.TileJSON({
         crossOrigin: '',
         tileSize: [512, 512],
-        maxZoom: 10,
-        url: 'https://maps.tilehosting.com/c/octogeo/data/terrain_rgb_v3/{z}/{x}/{y}.png?key=' + MT_KEY
-      }),
-      new ol.source.XYZ({
-        crossOrigin: '',
-        tileSize: [512, 512],
-        maxZoom: 5,
-        url: 'https://maps.tilehosting.com/c/octogeo/data/terrain_rgb_lowres-v3.0-z0-z5-osm/{z}/{x}/{y}.png?key=' + MT_KEY
-      }),
-      new ol.source.XYZ({
-        crossOrigin: '',
-        tileSize: [512, 512],
-        maxZoom: 10,
-        url: 'https://maps.tilehosting.com/c/octogeo/data/terrain_rgb_medium_v3/{z}/{x}/{y}.png?key=' + MT_KEY
+        url: 'https://api.maptiler.com/tiles/79cb9bf9-76d0-4302-9e44-fd5a77d29c39/tiles.json?key=7aik6nWjtgs9YBivx8Hr'
       }),
     ];
     var raster = new ol.source.Raster({
@@ -184,7 +168,7 @@
       });
 
       heights = heights.map(function(h) {return h.toFixed(1);});
-      var titles = ['terrain-rgb v1', 'terrain-rgb v3', 'lowres v3', 'mediumres v3'];
+      var titles = ['terrain-rgb', 'aster v3'];
       var h_titles = '';
       var h_val = '';
       for (var i = 0; i < titles.length; i++) {

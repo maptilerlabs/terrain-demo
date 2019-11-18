@@ -3,8 +3,8 @@
 <head>
   <title>Raster DEM</title>
   <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
-  <script src="https://cdn.klokantech.com/mapbox-gl-js/v0.47.0/mapbox-gl.js"></script>
-  <link href="https://cdn.klokantech.com/mapbox-gl-js/v0.47.0/mapbox-gl.css" rel="stylesheet" />
+  <script src="https://cdn.maptiler.com/mapbox-gl-js/v0.53.0/mapbox-gl.js"></script>
+  <link href="https://cdn.maptiler.com/mapbox-gl-js/v0.53.0/mapbox-gl.css" rel="stylesheet" />
   <style>
     #map {position: absolute; top: 50px; right: 0; bottom: 0; left: 0;}
   </style>
@@ -15,10 +15,8 @@
   Exaggeration: <input type="range" min="0" max="1" value="1" step="0.1" oninput="update()" id="exa" />
   B&amp;W: <input type="checkbox" onchange="update()" id="bw" />
   Dataset: <select onchange="update_dataset()" id="src">
-    <option value="https://maps.tilehosting.com/data/terrain-rgb.json?key=mXcaKrAofa07Lt6VRgqC">Terrain RGB v1</option>
-    <option value="https://maps.tilehosting.com/c/octogeo/data/terrain_rgb_v3.json?key=mXcaKrAofa07Lt6VRgqC" selected>Terrain RGB v3</option>
-    <option value="https://maps.tilehosting.com/c/octogeo/data/terrain_rgb_lowres-v3.0-z0-z5-osm.json?key=mXcaKrAofa07Lt6VRgqC">Lowres v3 z0-z5</option>
-    <option value="https://maps.tilehosting.com/c/octogeo/data/terrain_rgb_medium_v3.json?key=mXcaKrAofa07Lt6VRgqC">Mediumres v3 z0-z10</option>
+    <option value="https://api.maptiler.com/tiles/terrain-rgb/tiles.json?key=mXcaKrAofa07Lt6VRgqC">Production Terrain RGB</option>
+    <option value="https://api.maptiler.com/tiles/79cb9bf9-76d0-4302-9e44-fd5a77d29c39/tiles.json?key=7aik6nWjtgs9YBivx8Hr" selected>Aster v3</option>
   </select>
   <script>
     var update = function() {

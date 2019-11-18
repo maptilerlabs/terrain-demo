@@ -21,7 +21,7 @@
     <option value="110">Aster v3 - Production Terrain RGB diff</option>
   </select>
   Flood: <input type="range" min="-501" max="6000" value="-501" oninput="raster.changed()" id="flood" style="width:500px" /> (<span id="flood-val"></span>)
-  Streets opacity: <input type="range" min="0" max="1" value="0" step="0.1" oninput="streetsLayer.setOpacity(this.value)" />
+  Streets opacity: <input type="range" min="0" max="1" value="0" step="0.1" oninput="streetsLayer.setOpacity(parseFloat(this.value))" />
   <script>
     var getAlt = function(p) {
       return -10000 + (p[0] * 256 * 256 + p[1] * 256 + p[2]) / 10;

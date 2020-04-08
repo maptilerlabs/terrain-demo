@@ -130,11 +130,11 @@
   "sources":{
     "landcover":{
       "type":"vector",
-      "url":"https://maps.tilehosting.com/data/landcover.json?key=mXcaKrAofa07Lt6VRgqC"
+      "url":"https://api.maptiler.com/tiles/landcover/tiles.json?key=7aik6nWjtgs9YBivx8Hr"
     },
     "terrain-rgb":{
       "type":"raster-dem",
-      "url":"https://maps.tilehosting.com/data/terrain-rgb.json?key=mXcaKrAofa07Lt6VRgqC"
+      "url":"https://api.maptiler.com/tiles/c9c4d71e-c88d-4342-9cba-d96267b1eb76/tiles.json?key=7aik6nWjtgs9YBivx8Hr"
     }
   },
   "version":8

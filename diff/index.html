@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Terrain diff</title>
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+    <link rel="stylesheet" href="https://cdn.maptiler.com/ol/v6.0.0/ol.css" type="text/css">
+    <script src="https://cdn.maptiler.com/ol/v6.0.0/ol.js"></script>
+  <style>
+    #map {position: absolute; top: 50px; right: 0; bottom: 0; left: 0;}
+    #popup {font-size:0.75em;background:#fff;opacity:0.8;border-radius:2px;text-align:center;}
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+  <div id="popup"></div>
+  A: <select onchange="raster.changed()" id="srcA"></select>
+  B: <select onchange="raster.changed()" id="srcB"></select>
+  Streets opacity: <input type="range" min="0" max="1" value="0" step="0.1" oninput="streetsLayer.setOpacity(parseFloat(this.value))" />
+  Note: Compares elevation of two datasets, red - A&gt;B, green - A&lt;B, full color - 100m difference
+  <script>
+    const SOURCES = {
+      'Production terrain': 'terrain-rgb',
+      'Aster v3': 'c438b4c1-a74a-41b4-a526-087a03b0a3d7'
+    };
+    const MT_KEY = 'mXcaKrAofa07Lt6VRgqC';
+
+    var srcAEl = document.getElementById('srcA');
+    var srcBEl = document.getElementById('srcB');
+    var sources = [];
+    var layers = [];
+    var raster;
+
+    var id = 0;
+    Object.keys(SOURCES).forEach(function(name) {
+      var value = SOURCES[name];
+
+      var src = new ol.source.TileJSON({
+        crossOrigin: '',
+        tileSize: [512, 512],
+        url: `https://api.maptiler.com/tiles/${value}/tiles.json?key=${MT_KEY}`
+      });
+
+      sources.push(src);
+
+      var layer = new ol.layer.Tile({
+        source: src,
+        className: 'ol-layer layer-' + id,
+        opacity: 1
+      });
+      layer._id = id;
+      layers.push(layer);
+
+      src.on('change', function() {raster.changed();});
+
+      [srcAEl, srcBEl].forEach(function(selectEl) {
+        var option = document.createElement('option');
+        option.value = id;
+        option.text = name;
+        selectEl.add(option);
+      });
+
+      id++;
+    });
+
+    var getAlt = function(p) {
+      return -10000 + (p[0] * 256 * 256 + p[1] * 256 + p[2]) / 10;
+    };
+
+    var streetsLayer = new ol.layer.Tile({
+      source: new ol.source.TileJSON({
+        crossOrigin: '',
+        url: 'https://api.maptiler.com/maps/streets/tiles.json?key=' + MT_KEY
+      }),
+      opacity: 0
+    });
+
+    raster = new ol.source.Raster({
+      sources: sources,
+      operation: function(pixels, data) {
+        var diff = getAlt(pixels[data.srcB]) - getAlt(pixels[data.srcA]);
+        var scaled = 255 * Math.max(-1, Math.min(1, diff / 100));
+
+        return [scaled < 0 ? -scaled : 0, scaled > 0 ? scaled : 0, 0, 255];
+      },
+      lib: {
+        getAlt: getAlt
+      }
+    });
+
+    raster.on('beforeoperations', function(event) {
+      var data = event.data;
+      data.srcA = parseFloat(srcAEl.value);
+      data.srcB = parseFloat(srcBEl.value);
+    });
+
+
+    var zoom = 7;
+    var center = ol.proj.fromLonLat([8.5456, 47.3739]);
+    if (window.location.hash !== '') {
+      var hash = window.location.hash.replace('#', '');
+      var parts = hash.split('/');
+      if (parts.length === 3) {
+        zoom = parseInt(parts[0], 10);
+        center = ol.proj.fromLonLat([
+          parseFloat(parts[2]),
+          parseFloat(parts[1])
+        ]);
+      }
+    }
+
+    layers.push(new ol.layer.Image({
+      source: raster
+    }));
+    layers.push(streetsLayer);
+
+    var map = new ol.Map({
+      layers: layers,
+      target: 'map',
+      view: new ol.View({
+        center: center,
+        zoom: zoom
+      })
+    });
+
+    var pickerOverlay = new ol.Overlay({
+      element: document.getElementById('popup'),
+      offset: [7, 7]
+    });
+    map.on('pointermove', function(evt) {
+      var h = [];
+      map.forEachLayerAtPixel(evt.pixel, function(layer, pixel) {
+        let height = getAlt(pixel);
+        h[layer._id] = height;
+      }, undefined, function(layer) {
+        return layer.getSource() != raster && layer != streetsLayer;
+      });
+
+      var hA = h[parseInt(srcAEl.value, 10)] || -1, hB = h[parseInt(srcBEl.value, 10)] || -1;
+
+      var html =
+        '<table>' +
+        '<tr><th>A</th><th>B</th><th>diff</th></tr>' +
+        `<tr><td>${hA.toFixed(1)}</td><td>${hB.toFixed(1)}</td><td>${(hB - hA).toFixed(1)}</td></tr>` +
+        '</table>';
+      pickerOverlay.getElement().innerHTML = html;
+      pickerOverlay.setPosition(evt.coordinate);
+    });
+    map.addOverlay(pickerOverlay);
+
+    // permalink
+    var view = map.getView();
+    var updatePermalink = function() {
+      var center = ol.proj.toLonLat(view.getCenter());
+      var hash = '#' +
+          view.getZoom() + '/' +
+          Math.round(center[1] * 100) / 100 + '/' +
+          Math.round(center[0] * 100) / 100;
+      location.hash = hash;
+    };
+
+    map.on('moveend', updatePermalink);
+
+    // HACK -- overrides `getContext`
+    // Forces every newly-created canvas to have `imageSmoothingEnabled = false`
+    // This basically means `nearest` upsampling and solves most of the filtering artifacts (except during zooming)
+    HTMLCanvasElement.prototype.getContext = function(orig) {
+      return function(type) {
+        var result = orig.apply(this, arguments);
+        //console.log('unsmoothing');
+        result.imageSmoothingEnabled = false;
+        return result;
+      }
+    }(HTMLCanvasElement.prototype.getContext)
+  </script>
+</body>
+</html>

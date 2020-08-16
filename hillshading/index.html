@@ -7,10 +7,12 @@
   <link href="https://cdn.maptiler.com/mapbox-gl-js/v0.53.0/mapbox-gl.css" rel="stylesheet" />
   <style>
     #map {position: absolute; top: 50px; right: 0; bottom: 0; left: 0;}
+    #info {position: absolute; bottom: 0px; left: 0;}
   </style>
 </head>
 <body>
   <div id="map"></div>
+  <div id="info"></div>
   Direction: <input type="range" min="0" max="359" value="335" oninput="update()" id="dir" />
   Exaggeration: <input type="range" min="0" max="1" value="1" step="0.1" oninput="update()" id="exa" />
   B&amp;W: <input type="checkbox" onchange="update()" id="bw" />
@@ -91,6 +93,16 @@
     map.once('styledata', function() {
       update_dataset();
       update();
+    });
+
+    map.on('mousemove', function(e) {
+        document.getElementById('info').innerHTML =
+        // e.point is the x, y coordinates of the mousemove event relative
+        // to the top-left corner of the map
+        JSON.stringify(e.point) +
+        '<br />' +
+        // e.lngLat is the longitude, latitude geographical position of the event
+        JSON.stringify(e.lngLat.wrap());
     });
   </script>
 </body>

@@ -25,6 +25,7 @@
     <option value="5">Swiss DHM25</option>
     <option value="6">Swiss Alti3D</option>
     <option value="7">Swiss Contours</option>
+    <option value="8">Linear sigma, smoothed viewfinder</option>
 
   </select>
   Flood: <input type="range" min="-501" max="6000" value="-501" oninput="raster.changed()" id="flood" style="width:500px" /> (<span id="flood-val"></span>)
@@ -84,6 +85,11 @@
         tileSize: [512, 512],
         url: 'https://api.maptiler.com/tiles/b560b08a-eb87-473a-97d7-6dfce27330c2/tiles.json?key=7aik6nWjtgs9YBivx8Hr'
       }),
+      new ol.source.TileJSON({
+        crossOrigin: '',
+        tileSize: [512, 512],
+        url: 'https://api.maptiler.com/tiles/e9a10ad2-c5c0-4624-a5de-4a4da8c3ae44/tiles.json?key=7aik6nWjtgs9YBivx8Hr'
+      })
     ];
     var raster = new ol.source.Raster({
       sources: sources,

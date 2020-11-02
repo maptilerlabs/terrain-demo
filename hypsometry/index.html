@@ -27,6 +27,7 @@
     <option value="7">Swiss Contours</option>
     <option value="8">Linear sigma, smoothed viewfinder</option>
     <option value="9">Copernius 30m Switzerland</option>
+    <option value="10">Copernius 10m Switzerland</option>
 
   </select>
   Flood: <input type="range" min="-501" max="6000" value="-501" oninput="raster.changed()" id="flood" style="width:500px" /> (<span id="flood-val"></span>)
@@ -95,6 +96,11 @@
         crossOrigin: '',
         tileSize: [512, 512],
         url: 'https://api.maptiler.com/tiles/1366ec65-36e0-40a2-be30-0af0a11e45be/tiles.json?key=7aik6nWjtgs9YBivx8Hr'
+      }),
+      new ol.source.TileJSON({
+        crossOrigin: '',
+        tileSize: [512, 512],
+        url: 'https://api.maptiler.com/tiles/d188b3bb-1555-4d88-adb2-c04a589e5d42/tiles.json?key=7aik6nWjtgs9YBivx8Hr'
       })
     ];
     var raster = new ol.source.Raster({

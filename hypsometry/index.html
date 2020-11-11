@@ -28,6 +28,7 @@
     <option value="8">Linear sigma, smoothed viewfinder</option>
     <option value="9">Copernius 30m (Testing spots)</option>
     <option value="10">Copernius 10m Switzerland</option>
+    <option value="11">Blue Earth Bathymetry</option>
 
   </select>
   Flood: <input type="range" min="-501" max="6000" value="-501" oninput="raster.changed()" id="flood" style="width:500px" /> (<span id="flood-val"></span>)
@@ -101,6 +102,11 @@
         crossOrigin: '',
         tileSize: [512, 512],
         url: 'https://api.maptiler.com/tiles/d188b3bb-1555-4d88-adb2-c04a589e5d42/tiles.json?key=7aik6nWjtgs9YBivx8Hr'
+      }),
+      new ol.source.TileJSON({
+        crossOrigin: '',
+        tileSize: [512, 512],
+        url: 'https://api.maptiler.com/tiles/bff753e6-4b80-42dc-a5e2-900fa823bc15/tiles.json?key=7aik6nWjtgs9YBivx8Hr'
       })
     ];
     var raster = new ol.source.Raster({

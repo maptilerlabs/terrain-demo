@@ -1,0 +1,49 @@
+<html>
+        <head>
+                <title>Contours demo</title>
+                <meta charset="UTF-8">
+                <link rel="stylesheet" href="https://cdn.skypack.dev/maplibre-gl/dist/maplibre-gl.css" />
+                <style>
+body { margin: 0; padding: 0; }
+#map { position: absolute; top: 0; bottom: 0; width: 100%; }
+</style>
+</head>
+<body>
+<style>
+body {
+overflow: hidden;
+}
+ 
+body * {
+-webkit-touch-callout: none;
+-webkit-user-select: none;
+-moz-user-select: none;
+-ms-user-select: none;
+user-select: none;
+}
+ 
+.map {
+position: absolute;
+top: 0;
+bottom: 0;
+width: 100%;
+}
+</style>
+        <script type="text/javascript">
+                // hack
+                window.mapboxgl = {};
+        </script>
+
+        <script type="text/javascript" src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-compare/v0.4.0/mapbox-gl-compare.js"></script>
+<link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-compare/v0.4.0/mapbox-gl-compare.css"
+      />
+        </head>
+        <body>
+                <div id="comparison-container">
+                        <div id="back" class="map"></div>
+                        <div id="before" class="map">Old map</div>
+                        <div id="after" class="map">New map</div>
+                </div>
+        <script type="module" src="map.js"></script>
+        </body>
+</html>

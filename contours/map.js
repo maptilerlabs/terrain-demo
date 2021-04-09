@@ -12,7 +12,8 @@ const backgroundMap = new Map({
 
 const beforeMap = new Map({
   container: 'before',
-  style: `https://api.maptiler.com/maps/2c83d77f-6309-404c-a00b-ab6a1c47b21b/style.json?key=${mapTilerKey}`,
+  style: `https://api.maptiler.com/maps/2c83d77f-6309-404c-a00b-ab6a1c47b21b/style.json?key=${mapTilerKey}`, // PRODUCTION
+  //style: `https://api.maptiler.com/maps/ch-swisstopo-lbm/style.json?key=${mapTilerKey}`, // SWISS TOPO
   center: [0, 0],
   hash: true,
   zoom: 0
@@ -20,7 +21,8 @@ const beforeMap = new Map({
 
 const afterMap = new Map({
   container: 'after',
-  style: `https://api.maptiler.com/maps/48315e60-7931-47e9-8118-32f937f1823f/style.json?key=${mapTilerKey}`,
+  //style: `https://api.maptiler.com/maps/48315e60-7931-47e9-8118-32f937f1823f/style.json?key=${mapTilerKey}`, // UAE-SWISS-OLMIK
+  style: `https://api.maptiler.com/maps/38887e1c-b17d-4a90-975d-9c8f88c05164/style.json?key=qsYmsqFwCO0J7HPO9nOq`, // EUROPE
   center: [0, 0],
   hash: true,
   zoom: 0
